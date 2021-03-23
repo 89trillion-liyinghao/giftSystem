@@ -1,27 +1,27 @@
-#礼品码接口
+# 礼品码接口
 - 开发语言：golang  *v1.16*
 - 后端框架：gin  *v1.6.3*
-- 数据库：redis-v8  *v8.7.1*
-##1.基本介绍
-###1.1项目介绍
-- 本地测试地址：
+- 数据库：redis-v8  *v8.7.1*  
+## 1.基本介绍  
+### 1.1项目介绍  
+- 本地测试地址：  
   - [创建礼品码](http://localhost:8080/createCode)
   - [验证礼品码](http://localhost:8080/giftVerify/)
   
-- 开发者：lyh
-- 当前版本：1.0
-###1.2使用说明
+- 开发者：lyh  
+- 当前版本：1.0  
+### 1.2使用说明  
 >- 安装gin
    >>"github.com/gin-gonic/gin"
 >- 安装redis-v8
 >>"github.com/go-redis/redis/v8"
 
-- 创建礼品接口 
+- 创建礼品接口  
   - 接收前端gift参数  
-    1.gift数据格式：
+    1.gift数据格式： 
     >{"count":Count,"gold":Gold,"diamond":Diamond,"prop":Prop}
     
-    2.gift参数信息：
+    2.gift参数信息： 
 
     | 参数 | 含义 | 备注
     | :------| :------|:------|
@@ -39,37 +39,36 @@
     >发放成功：返回gift参数  
      发放失败：返回错误信息
 
-##2.项目说明
-###2.1目录结构
-- log (保存日志文件)
-- src (项目源码)
+## 2.项目说明  
+### 2.1目录结构
+- giftSystem (项目包名)
+  - logs (保存日志文件)
   - config (项目配置文件)
   - controller (应用层源码)
-  - dao (数据库源码)
+  - repository (数据库源码)
   - entity (实体源码)
-  - log (日志系统配置)
   - router (路由配置)
   - service (逻辑层源码)
   - setting (项目配置)
-  - util (工具包)
-- testUtil (单元测试文件)
+  - pkg (工具包)  
+    - util (工具类)
 
-###2.2 应用层
+### 2.2 应用层  
 - **CreatCode函数**  
 1. 调用util.bind()函数绑定前端gift参数  
-2. 调用service.CreateGift()函数获取礼品码
-3. 返回礼品码创建结果
+2. 调用service.CreateGift()函数获取礼品码  
+3. 返回礼品码创建结果  
   >成功返回礼品码code / 失败返回错误信息
 
-- **VerifyCode函数**
-1. 读取cookie验证用户登陆信息
-2. 读取code参数，判定礼品码是否为空
-3. 调用service.VerifyGift()获取礼品信息
+- **VerifyCode函数**  
+1. 读取cookie验证用户登陆信息  
+2. 读取code参数，判定礼品码是否为空  
+3. 调用service.VerifyGift()获取礼品信息  
 > 礼品码合法返回礼品内容，执行步骤4 / 礼品码非法返回""字符串，返回错误信息
-4. 调用service.AddGift()增加奖励
-5. 返回礼品内容
+4. 调用service.AddGift()增加奖励  
+5. 返回礼品内容  
 
-###2.3 逻辑层
+### 2.3 逻辑层  
 - **CreateGift(gift string)函数**
 1. 获取礼品信息
 2. 调用util.Encode(code int64)获取生成的8位礼品码
@@ -82,6 +81,8 @@
 2. 查询数据库code是否存在
 >code不存在返回错误信息
 3. 检查礼品信息中领取次数是否到达上限  
+>防止超领问题增加sync.Mutex进行上锁，若count<=0直接解锁，降低锁粒度，提高并发量。  
+> 
 > count > 0 未达上限，更新count--  
 > count == 0 礼品领取礼品领取到达上限，调用dao.Del删除code  
 > count < 0 礼品领取不限次数
@@ -94,7 +95,7 @@
 2. 保存用户礼品领取信息
 3. 返回增加的礼品信息json字符串
 
-###2.4 dao层
+### 2.4 dao层
 - **Set(code string,gift string)函数**
 1. 调用Redis.Set() 存储礼品码信息
 >key = GIFTCODE + code  
@@ -110,7 +111,7 @@
 - **Del(code string)函数**
 1. 删除key=code
 
-###2.5 单元测试
+### 2.5 单元测试
 >礼品结构：  
 > type AddGift struct {  
 &ensp;&ensp;&ensp;&ensp;Count   int `json:"count"`       //礼品数量 负数为无限领取  

@@ -1,0 +1,3 @@
+Error: 2021/03/23 12:14:32 main.go:23: 读取redis配置文件失败: Config File "config" Not Found in "[/Users/liyinghao/go/src/giftSystem/src/config]"
+Error: 2021/03/23 12:15:17 main.go:23: 读取redis配置文件失败: Config File "config" Not Found in "[/config]"
+Error: 2021/03/23 14:50:11 main.go:23: 读取redis配置文件失败: Config File "config" Not Found in "[/Users/liyinghao/go/src/giftSystem/giftSystem/config]"
