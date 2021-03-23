@@ -132,7 +132,7 @@
   测试礼品id = 1-10代码输出，预期结果为不同的8为字符串  
 - **TestBind()**  
   Bind绑定JSON字符串测试
-  访问localhost:8080/TestBind地址，传递json，控制台打印Json字符串  
+  访问localhost:8081/TestBind地址，传递json，控制台打印Json字符串  
 - **TestNewSetting()**   
   1.NewSetting函数测试单元  
   输出配置文件所有信息  
@@ -153,7 +153,7 @@
   
 - **TestCreate()**  
   Create函数测试单元  
-  访问localhost:8080/TestCreatCode  
+  访问localhost:8082/TestCreatCode  
   发送post请求  
   >json：  
   {  
@@ -166,7 +166,7 @@
   
 - **TestVerifyCode()**  
   VerifyCode函数测试单元  
-  访问localhost:8080/TestVerifyCode  
+  访问localhost:8083/TestVerifyCode  
   >参数:  
   &ensp;&ensp;&ensp;&ensp;cookie：userName=121  
   &ensp;&ensp;&ensp;&ensp;query：code=8A8S2DZX  
