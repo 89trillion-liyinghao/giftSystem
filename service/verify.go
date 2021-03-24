@@ -9,7 +9,7 @@ import (
 )
 
 var mutex sync.Mutex
-var giftIsEmpty = false
+var giftIsEmpty = make(map[string]bool)
 
 /*
 逻辑层：利用礼品码查询redis，返回查询结果
@@ -48,13 +48,17 @@ func VerifyGift(code string, uid string, gift *entity.AddGift) string {
 	}
 
 	//内存标记判空
-	if giftIsEmpty {
+	isExist, ok := giftIsEmpty[code]
+	if !ok {
+		giftIsEmpty[code] = false
+		isExist = false
+	}
+	if isExist {
 		return ""
 	}
-
 	if gift.Count == 0 {
 		rd.RedisStore{}.Del(code)
-		giftIsEmpty = true
+		giftIsEmpty[code] = true
 		return ""
 	}
 
