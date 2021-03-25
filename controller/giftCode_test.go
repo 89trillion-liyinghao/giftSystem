@@ -101,3 +101,59 @@ func CreateGift(gift string) string {
 	fmt.Printf("礼品创建成功，礼品码：" + code + "\n")
 	return code
 }
+
+/*
+VerifyCode函数测试单元
+访问localhost:8083/TestVerifyCode
+参数
+cookie：userName=121
+query：code=8A8S2DZX
+
+返回打印领取结果
+*/
+
+func TestVerifyCode(t *testing.T) {
+	r := gin.Default()
+	r.GET("/TestVerifyCode", VerifyCode1)
+	_ = r.Run(":8083")
+}
+
+func VerifyCode1(c *gin.Context) {
+	//检查用户是否登录
+	uid, err := c.Cookie("userName")
+	if err != nil || uid == "" {
+		c.String(http.StatusOK, "请先登录")
+		return
+	}
+
+	//礼品码判空
+	//code打桩
+	code := "XXXXXXXX"
+	//code := c.DefaultQuery("code", "")
+	//if code == "" {
+	//	c.String(http.StatusOK, "礼品码不能为空")
+	//	return
+	//}
+
+	//验证用户是否可以领取礼品码
+	//var gift gift
+
+	suc := "成功" //打桩测试
+	//suc := "重复领取"
+	//奖品信息
+	if suc == "" {
+		c.String(http.StatusOK, "礼品码错误或不存在")
+		return
+	} else if suc == "重复领取" {
+		c.String(http.StatusOK, "不能重复领取")
+		return
+	}
+
+	//调用奖励接口，增加奖励
+	//result := AddGift1(uid, code, gift)
+	//打桩测试
+	result := "礼品内容XXX"
+
+	fmt.Printf("用户\"" + uid + "\"礼品码：\"" + code + "\"获取成功\n")
+	c.String(http.StatusOK, "获取成功，获得礼品为："+result)
+}
