@@ -3,7 +3,6 @@ package service
 import (
 	"encoding/json"
 	"fmt"
-	rd "giftSystem/repository"
 	"testing"
 )
 
@@ -14,27 +13,10 @@ type giftJSON struct {
 	Prop    int `json:"prop"`    //增加道具数量
 }
 
-var code = "SAS2DZX9" //设定礼品码
-var user_id = "111"   //设定用户id
-
-//初始化redis
-func init() {
-	//初始化数据库配置
-	err := rd.SetupSetting()
-	if err != nil {
-		//写日志
-		fmt.Println("读取redis配置文件失败")
-		return
-	}
-
-	//连接redis数据库
-	err = rd.ConnRedis()
-	if err != nil {
-		//写日志
-		fmt.Println("redis数据库连接失败")
-		return
-	}
-}
+var code = "SAS2DZX9"                                                   //设定礼品码
+var user_id = "111"                                                     //设定用户id
+var exi = false                                                         //是否重复领取
+var giftStore = "{\"count\": 5,\"gold\": 5,\"diamond\": 5,\"prop\": 5}" //设定礼品json字符串
 
 /*
 Verify函数单元测试
@@ -43,6 +25,10 @@ Verify函数单元测试
 func TestVerify(t *testing.T) {
 	/*设定礼品内容*/
 	var g giftJSON
+	g.Count = 5
+	g.Gold = 5
+	g.Diamond = 5
+	g.Prop = 5
 
 	res := VerifyGift1(code, user_id, &g)
 
@@ -58,7 +44,7 @@ func VerifyGift1(code string, uid string, gift *giftJSON) string {
 	//}
 
 	//获取礼品
-	giftStore := rd.RedisStore{}.Get(code, false)
+	//giftStore := rd.RedisStore{}.Get(code, false)
 	if giftStore == "" {
 		fmt.Printf("礼品码：\"" + code + "\"不存在\n")
 		return ""
@@ -70,17 +56,17 @@ func VerifyGift1(code string, uid string, gift *giftJSON) string {
 	}
 
 	//查询是否重复领取
-	exi := rd.RedisStore{}.Exist(code, uid)
+	//exi := rd.RedisStore{}.Exist(code, uid)
 	if exi {
 		return "重复领取"
 	}
 
 	if gift.Count > 0 {
 		gift.Count--
-		giftJson, _ := json.Marshal(gift)
-		rd.RedisStore{}.Set(code, string(giftJson))
+		//giftJson, _ := json.Marshal(gift)
+		//rd.RedisStore{}.Set(code, string(giftJson))
 	} else if gift.Count == 0 {
-		rd.RedisStore{}.Del(code)
+		//rd.RedisStore{}.Del(code)
 		return ""
 	}
 

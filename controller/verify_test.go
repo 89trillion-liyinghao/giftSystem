@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/json"
 	"fmt"
 	rd "giftSystem/repository"
 	"github.com/gin-gonic/gin"
@@ -59,15 +58,20 @@ func VerifyCode1(c *gin.Context) {
 	}
 
 	//礼品码判空
-	code := c.DefaultQuery("code", "")
-	if code == "" {
-		c.String(http.StatusOK, "礼品码不能为空")
-		return
-	}
+	//code打桩
+	code := "XXXXXXXX"
+	//code := c.DefaultQuery("code", "")
+	//if code == "" {
+	//	c.String(http.StatusOK, "礼品码不能为空")
+	//	return
+	//}
 
 	//验证用户是否可以领取礼品码
-	var gift gift
-	suc := VerifyGift1(code, uid, &gift)
+	//var gift gift
+
+	suc := "成功" //打桩测试
+	//suc := "重复领取"
+	//奖品信息
 	if suc == "" {
 		c.String(http.StatusOK, "礼品码错误或不存在")
 		return
@@ -77,68 +81,10 @@ func VerifyCode1(c *gin.Context) {
 	}
 
 	//调用奖励接口，增加奖励
-	result := AddGift1(uid, code, gift)
+	//result := AddGift1(uid, code, gift)
+	//打桩测试
+	result := "礼品内容XXX"
 
 	fmt.Printf("用户\"" + uid + "\"礼品码：\"" + code + "\"获取成功\n")
 	c.String(http.StatusOK, "获取成功，获得礼品为："+result)
-}
-
-func VerifyGift1(code string, uid string, gift *gift) string {
-	//检查奖品码是否存在
-	//ex := rd.RedisStore{}.Exist(code)
-	//if !ex{
-	//	l.Trace.Printf("礼品码：\""+code+"\"不存在\n")
-	//	return ""
-	//}
-
-	//获取礼品
-	giftStore := rd.RedisStore{}.Get(code, false)
-	if giftStore == "" {
-		fmt.Printf("礼品码：\"" + code + "\"不存在\n")
-		return ""
-	}
-	err := json.Unmarshal([]byte(giftStore), gift)
-	if err != nil {
-		fmt.Printf("json绑定失败: %v\n", err)
-		return ""
-	}
-
-	//查询是否重复领取
-	exi := rd.RedisStore{}.Exist(code, uid)
-	if exi {
-		return "重复领取"
-	}
-
-	if gift.Count > 0 {
-		gift.Count--
-		giftJson, _ := json.Marshal(gift)
-		rd.RedisStore{}.Set(code, string(giftJson))
-	} else if gift.Count == 0 {
-		rd.RedisStore{}.Del(code)
-		return ""
-	}
-
-	return giftStore
-
-}
-
-func AddGift1(uid string, code string, gift gift) string {
-
-	//奖励逻辑
-	//fmt.Println("执行增加奖励逻辑")
-
-	//返回奖励结果
-	result, err := json.Marshal(gift)
-	if err != nil {
-		return ""
-	}
-
-	//保存用户领取信息
-	suc := rd.RedisStore{}.SetUid(code, uid)
-	if !suc {
-		//写日志
-		fmt.Printf("礼品获取失败\n")
-		return ""
-	}
-	return string(result)
 }

@@ -3,7 +3,6 @@ package service
 import (
 	"encoding/json"
 	"fmt"
-	rd "giftSystem/repository"
 	"testing"
 )
 
@@ -16,25 +15,7 @@ type testGift struct {
 
 var id = "0"       //设定用户id
 var c = "3r3r3223" //设定礼品码
-
-//初始化redis
-func init() {
-	//初始化数据库配置
-	err := rd.SetupSetting()
-	if err != nil {
-		//写日志
-		fmt.Println("读取redis配置文件失败")
-		return
-	}
-
-	//连接redis数据库
-	err = rd.ConnRedis()
-	if err != nil {
-		//写日志
-		fmt.Println("redis数据库连接失败")
-		return
-	}
-}
+var suc = true     //设定增加礼品是否成功
 
 /*测试AddGift函数,返回增加礼品结果*/
 func TestAddGift(t *testing.T) {
@@ -64,7 +45,7 @@ func AddGift1(uid string, code string, gift testGift) string {
 	}
 
 	//保存用户领取信息
-	suc := rd.RedisStore{}.SetUid(code, uid)
+	//suc := rd.RedisStore{}.SetUid(code, uid)
 	if !suc {
 		//写日志
 		fmt.Printf("礼品获取失败\n")

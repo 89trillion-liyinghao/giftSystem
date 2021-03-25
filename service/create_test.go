@@ -4,30 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	u "giftSystem/pkg/util"
-	rd "giftSystem/repository"
 	"testing"
 )
 
-//初始化redis
-func init() {
-	//初始化数据库配置
-	err := rd.SetupSetting()
-	if err != nil {
-		//写日志
-		fmt.Println("读取redis配置文件失败")
-		return
-	}
-
-	//连接redis数据库
-	err = rd.ConnRedis()
-	if err != nil {
-		//写日志
-		fmt.Println("redis数据库连接失败")
-		return
-	}
-}
-
 var giftId_test uint64 = 1
+
+/*设定礼品是否创建成功*/
+var suc1 = true
 
 /*
 Create函数测试类
@@ -68,8 +51,9 @@ func CreateGift1(gift string) string {
 		}
 	*/
 
-	suc := rd.RedisStore{}.Set(code, gift)
-	if !suc {
+	//suc := rd.RedisStore{}.Set(code, gift)
+
+	if !suc1 {
 		//写日志
 		fmt.Printf("礼品创建失败\n")
 		return ""
